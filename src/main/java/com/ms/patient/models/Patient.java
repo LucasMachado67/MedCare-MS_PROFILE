@@ -1,25 +1,17 @@
 package com.ms.patient.models;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 import com.ms.patient.enums.PatientSituation;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Lob;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "patients")
-public class Patient{
+@PrimaryKeyJoinColumn(name = "person_id")
+public class Patient extends Person{
 
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private int patient_id;
-    private int person_id;
     private String healthPlan;
     @Lob
     private String description;
@@ -27,20 +19,14 @@ public class Patient{
     private ArrayList<String> allergies;
     private PatientSituation patientSituation;
 
-    public Patient(int person_id, String description, String healthPlan, PatientSituation patientSituation) {
-        setPersonId(person_id);
+    public Patient(String name, Date birthDate, String cpf, String gender, String email, String phone,
+                   Address address, String description, String healthPlan, PatientSituation patientSituation) {
+        super(name,birthDate,cpf,gender,email,phone,address);
         this.symptoms = new ArrayList<>();
         this.allergies = new ArrayList<>();
         setHealthPlan(healthPlan);
         setDescription(description);
         setPatientSituation(patientSituation);
-    }
-
-    public int getPersonId(){
-        return this.person_id;
-    }
-    public void setPersonId(int person_id){
-        this.person_id = person_id;
     }
 
     public String getHealthPlan() {
