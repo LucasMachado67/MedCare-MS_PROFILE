@@ -5,12 +5,13 @@ import java.util.List;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
+import org.springframework.context.annotation.ComponentScan;
 
 import com.ms.patient.dto.AddressDTO;
 import com.ms.patient.dto.AddressResponseDTO;
 import com.ms.patient.models.Address;
 
-
+@ComponentScan
 @Mapper(componentModel = "spring")
 public interface AddressMapper {
 

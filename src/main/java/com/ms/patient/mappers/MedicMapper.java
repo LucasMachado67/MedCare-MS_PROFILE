@@ -5,9 +5,11 @@ import com.ms.patient.dto.MedicResponseDTO;
 import com.ms.patient.models.Medic;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.springframework.context.annotation.ComponentScan;
 
 import java.util.List;
 
+@ComponentScan
 @Mapper(componentModel = "spring", uses = { AddressMapper.class })
 public interface MedicMapper {
 

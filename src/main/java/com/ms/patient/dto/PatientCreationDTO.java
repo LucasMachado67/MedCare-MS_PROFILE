@@ -6,6 +6,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.br.CPF;
 
+import com.ms.patient.enums.PatientSituation;
+
 import java.util.Date;
 import java.util.List;
 
@@ -25,5 +27,6 @@ public record PatientCreationDTO(
         @NotBlank String healthPlan,
         String description, // Geralmente opcional
         List<String> symptoms, // Para mapear coleções
-        List<String> allergies
+        List<String> allergies,
+        PatientSituation patientSituation
 ) {}
