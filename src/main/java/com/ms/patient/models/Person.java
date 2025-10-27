@@ -32,7 +32,7 @@ public class Person {
     @JoinColumn(name = "address_id", referencedColumnName = "id")
     private Address address;
     
-
+    public Person(){}
     public Person(String name, Date birthDate, String cpf, String gender, String email, String phone, Address address){
         setName(name);
         setBirthDate(birthDate);

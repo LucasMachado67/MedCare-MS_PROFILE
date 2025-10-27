@@ -1,10 +1,13 @@
 package com.ms.patient.service;
 
+import java.util.NoSuchElementException;
+
 import org.springframework.stereotype.Service;
 
 import com.ms.patient.dto.PatientCreationDTO;
 import com.ms.patient.dto.PatientResponseDTO;
 import com.ms.patient.mappers.PatientMapper;
+import com.ms.patient.models.Patient;
 import com.ms.patient.producers.UserCreationProducer;
 import com.ms.patient.repositories.PatientRepository;
 
@@ -44,4 +47,8 @@ public class PatientService {
         userProducer.publishUserCreationToPatientEvent(savedPatient);
         return mapper.toPatientResponseDTO(savedPatient);
     }
+
+    public Patient findById(long id){
+        return repository.findById(id).orElseThrow(() -> new NoSuchElementException("NO DATA FOUND"));
+    }    
 }

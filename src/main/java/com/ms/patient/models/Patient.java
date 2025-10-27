@@ -19,6 +19,10 @@ public class Patient extends Person{
     private ArrayList<String> allergies;
     private PatientSituation patientSituation;
 
+    public Patient(){
+        super();
+    }
+
     public Patient(String name, Date birthDate, String cpf, String gender, String email, String phone,
                    Address address, String description, String healthPlan, PatientSituation patientSituation) {
         super(name,birthDate,cpf,gender,email,phone,address);

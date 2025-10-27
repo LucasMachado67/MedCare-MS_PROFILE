@@ -15,6 +15,10 @@ public class Medic extends Person{
     @NotNull
     private String medicalSpeciality;
 
+    public Medic(){
+        super();
+    }
+
     public Medic(String name, Date birthDate, String cpf, String gender, String email, String phone,
                  Address address, String crm, String medicalSpeciality) {
         super(name, birthDate,cpf,gender,email,phone,address);
