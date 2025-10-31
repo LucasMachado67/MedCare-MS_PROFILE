@@ -35,11 +35,11 @@ public class UserCreationProducer {
 
     public void publishUserCreationToPatientEvent(Patient patient) {
         
-        var medicEventDto = new UserCreationEvent();
-        medicEventDto.setPerson_id(patient.getId());
-        medicEventDto.setUsername(patient.getEmail());
-        medicEventDto.setRole("USER");
+        var patientEventDto = new UserCreationEvent();
+        patientEventDto.setPerson_id(patient.getId());
+        patientEventDto.setUsername(patient.getEmail());
+        patientEventDto.setRole("USER");
         
-        rabbitTemplate.convertAndSend("", routingKeyPatient, medicEventDto);
+        rabbitTemplate.convertAndSend("", routingKeyPatient, patientEventDto);
     }
 }

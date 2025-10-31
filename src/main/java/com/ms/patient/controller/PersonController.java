@@ -11,6 +11,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.ms.patient.service.PersonService;
 import com.ms.patient.dto.PersonCreationDTO;
+import com.ms.patient.dto.PersonEmailSenderDto;
 import com.ms.patient.dto.PersonResponseDTO;
 import com.ms.patient.mappers.PersonMapper;
 import com.ms.patient.models.Person;
@@ -65,6 +66,13 @@ public class PersonController {
         PersonResponseDTO responseDto = mapper.toDtoResponse(entity);
         //Mandando o DTO
         return ResponseEntity.ok(responseDto);
+    }
+
+    @GetMapping("/email/{id}")
+    public ResponseEntity<PersonEmailSenderDto> findPersonToSendEmail(@PathVariable long id) {
+        //Pegando o objeto person do service
+        PersonEmailSenderDto entity = service.findPersonByIdToSendEmail(id);
+        return ResponseEntity.ok(entity);
     }
 
     @GetMapping("/all")

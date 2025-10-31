@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.ms.patient.dto.PersonCreationDTO;
+import com.ms.patient.dto.PersonEmailSenderDto;
 import com.ms.patient.exceptions.CpfAlreadyExistsException;
 import com.ms.patient.exceptions.EmailAlreadyExistsException;
 import com.ms.patient.exceptions.InvalidCpfException;
@@ -54,6 +55,16 @@ public class PersonService {
     public Person findPersonById(long id){
         return repository.findById(id).orElseThrow(() -> new NoSuchElementException("NOT FOUND"));
     }
+
+    public PersonEmailSenderDto findPersonByIdToSendEmail(long id){
+        PersonEmailSenderDto personEmailSenderDto = new PersonEmailSenderDto();
+        Person person = repository.findById(id).orElseThrow(() -> new NoSuchElementException("NOT FOUND"));
+        personEmailSenderDto.setId(person.getId());
+        personEmailSenderDto.setEmail(person.getEmail());
+        personEmailSenderDto.setNome(person.getName());
+        return personEmailSenderDto;
+    }
+
 
     public List<Person> findAll(){
         return repository.findAll();
