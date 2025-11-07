@@ -19,7 +19,7 @@ import com.ms.patient.service.PatientService;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("patients")
+@RequestMapping("patient")
 public class PatientController {
 
     @Autowired
