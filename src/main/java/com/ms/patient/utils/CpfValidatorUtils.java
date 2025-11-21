@@ -2,12 +2,32 @@ package com.ms.patient.utils;
 
 import java.util.InputMismatchException;
 
+/**
+ * Classe de utilidade (Utility Class) contendo métodos estáticos para
+ * realizar a validação matemática e de formato do Cadastro de Pessoas Físicas (CPF) brasileiro.
+ *
+ * <p>Esta validação segue a regra dos dígitos verificadores (DV1 e DV2).</p>
+ */
 public class CpfValidatorUtils {
+
+    // Prevenindo instanciação da classe utilitária
+    private CpfValidatorUtils() {
+        throw new IllegalStateException("Utility class");
+    }
 
     /**
      * Remove a máscara e verifica a validade matemática de um CPF.
+     *
+     * <p>Executa as seguintes etapas:
+     * <ul>
+     * <li>Limpa a string, removendo caracteres não numéricos.</li>
+     * <li>Verifica o tamanho (deve ter 11 dígitos).</li>
+     * <li>Bloqueia CPFs com todos os dígitos iguais (ex: 111.111.111-11).</li>
+     * <li>Calcula o primeiro e o segundo dígito verificador e compara com os dígitos fornecidos.</li>
+     * </ul></p>
+     *
      * @param cpf O CPF a ser validado, podendo conter máscara (pontos e traços).
-     * @return true se o CPF for válido, false caso contrário.
+     * @return {@code true} se o CPF for válido de acordo com as regras matemáticas e de formato, {@code false} caso contrário.
      */
     public static boolean isValidCpf(String cpf) {
         if (cpf == null) {
@@ -55,10 +75,14 @@ public class CpfValidatorUtils {
     }
 
     /**
-     * Método auxiliar para calcular um dígito verificador (DV).
-     * @param base String contendo os dígitos anteriores ao DV (9 para o primeiro, 10 para o segundo).
+     * Método auxiliar privado para calcular um dígito verificador (DV) usando o algoritmo de módulo 11.
+     *
+     * <p>O cálculo envolve a soma dos produtos dos dígitos da base por pesos decrescentes
+     * (começando pelo peso fornecido). O DV é (11 - (soma % 11)).</p>
+     *
+     * @param base String contendo os dígitos anteriores ao DV (9 dígitos para o primeiro DV, 10 para o segundo).
      * @param peso O peso inicial para a multiplicação (10 para o primeiro DV, 11 para o segundo).
-     * @return O dígito verificador calculado.
+     * @return O dígito verificador calculado (valor entre 0 e 9).
      */
     private static int calculateDv(String base, int peso) {
         int soma = 0;
@@ -83,6 +107,4 @@ public class CpfValidatorUtils {
             return 11 - resto;
         }
     }
-
-    
 }

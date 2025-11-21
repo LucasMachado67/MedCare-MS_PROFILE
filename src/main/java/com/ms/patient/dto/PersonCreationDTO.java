@@ -6,6 +6,12 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 
+/**
+ * DTO (Data Transfer Object) utilizado para enviar dados de criação ou atualização
+ * de uma Pessoa na API.
+ *
+ * <p>Contém os campos básicos de identificação e contato, e um objeto de endereço aninhado.</p>
+ */
 public class PersonCreationDTO {
 
     @NotBlank

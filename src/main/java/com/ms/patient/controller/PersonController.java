@@ -2,6 +2,7 @@ package com.ms.patient.controller;
 
 import java.net.URI;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +14,7 @@ import com.ms.patient.service.PersonService;
 import com.ms.patient.dto.PersonCreationDTO;
 import com.ms.patient.dto.PersonEmailSenderDto;
 import com.ms.patient.dto.PersonResponseDTO;
+import com.ms.patient.exceptions.EmailAlreadyExistsException;
 import com.ms.patient.mappers.PersonMapper;
 import com.ms.patient.models.Person;
 
@@ -25,6 +27,16 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 
+/**
+ * Controlador REST para gerenciar operações CRUD (Criação, Leitura, Atualização e Deleção)
+ * da entidade Pessoa (Person).
+ *
+ * <p>Mapeado para o caminho base "/person". Lida com a criação, validação de CPF/Email
+ * e manipulação dos dados básicos de uma pessoa.</p>
+ *
+ * @author Lucas Edson Machado
+ * @since 2025-11-17
+ */
 @RestController
 @RequestMapping("person")
 public class PersonController {
@@ -34,7 +46,19 @@ public class PersonController {
 
     @Autowired
     private PersonMapper mapper;
-    
+    /**
+     * Cria uma nova pessoa no sistema.
+     *
+     * <p>Recebe os dados da pessoa no corpo da requisição. Se as validações de CPF e Email
+     * no Service passarem, retorna o status HTTP 201 (Created) e a URI do novo recurso.</p>
+     *
+     * @param personCreationDto O DTO contendo os dados de criação da Pessoa.
+     * @return ResponseEntity contendo o {@link PersonResponseDTO} da pessoa criada
+     * e o status HTTP 201 (Created).
+     * @throws jakarta.validation.ValidationException se o DTO não for válido.
+     * @throws EmailAlreadyExistsException, CpfAlreadyExistsException, InvalidCpfException se as regras de negócio forem violadas.
+     * @throws Exception para erros internos não tratados (retorna 500 Internal Server Error).
+     */
     @PostMapping("/create")
     public ResponseEntity<PersonResponseDTO> createPerson(@Valid @RequestBody PersonCreationDTO personCreationDto) {
         try {
@@ -56,7 +80,14 @@ public class PersonController {
             return ResponseEntity.internalServerError().build();
         }
     }
-
+    /**
+     * Busca os detalhes de uma pessoa específica pelo seu ID.
+     *
+     * @param id O identificador único da pessoa a ser buscada.
+     * @return ResponseEntity contendo o {@link PersonResponseDTO} correspondente
+     * e o status HTTP 200 (OK).
+     * @throws NoSuchElementException Se nenhuma pessoa for encontrada com o ID fornecido (mapeado para 404).
+     */
     @GetMapping("/{id}")
     public ResponseEntity<PersonResponseDTO> findPersonById(@PathVariable long id) {
         
@@ -67,14 +98,26 @@ public class PersonController {
         //Mandando o DTO
         return ResponseEntity.ok(responseDto);
     }
-
+    /**
+     * Busca uma pessoa pelo ID e retorna um DTO simplificado, contendo apenas
+     * o Nome, ID e Email, tipicamente usado por serviços de comunicação (envio de e-mail).
+     *
+     * @param id O identificador único da pessoa a ser buscada.
+     * @return ResponseEntity contendo o {@link PersonEmailSenderDto} e o status HTTP 200 (OK).
+     * @throws NoSuchElementException Se nenhuma pessoa for encontrada com o ID fornecido (mapeado para 404).
+     */
     @GetMapping("/email/{id}")
     public ResponseEntity<PersonEmailSenderDto> findPersonToSendEmail(@PathVariable long id) {
         //Pegando o objeto person do service
         PersonEmailSenderDto entity = service.findPersonByIdToSendEmail(id);
         return ResponseEntity.ok(entity);
     }
-
+    /**
+     * Lista todas as pessoas cadastradas no sistema.
+     *
+     * @return ResponseEntity contendo uma {@link List} de {@link PersonResponseDTO}s
+     * e o status HTTP 200 (OK).
+     */
     @GetMapping("/all")
     public ResponseEntity<List<PersonResponseDTO>> findAll() {
         //Pegando a lista de pessoas do service
@@ -85,7 +128,15 @@ public class PersonController {
         return ResponseEntity.ok(personResponseDTOs);
 
     }
-
+    /**
+     * Atualiza os dados de uma pessoa existente com base no ID.
+     *
+     * @param id O ID da pessoa a ser atualizada.
+     * @param personCreationDTO O DTO contendo os novos dados (no corpo da requisição).
+     * @return ResponseEntity contendo o {@link PersonResponseDTO} atualizado e o status HTTP 200 (OK).
+     * @throws NoSuchElementException Se o ID não for encontrado (mapeado para 404).
+     * @throws jakarta.validation.ValidationException se o DTO não for válido.
+     */
     @PutMapping("/{id}")
     public ResponseEntity<PersonResponseDTO> updatePerson(@PathVariable long id,@Valid @RequestBody PersonCreationDTO person) {
         
@@ -96,7 +147,13 @@ public class PersonController {
         //Retorna 200 OK e o corpo atualizado
         return ResponseEntity.ok(personResponseDTO);
     }
-
+    /**
+     * Deleta uma pessoa do sistema pelo seu ID.
+     *
+     * @param id O ID da pessoa a ser deletada.
+     * @return ResponseEntity com o status HTTP 204 (No Content), indicando sucesso na deleção sem corpo de resposta.
+     * @throws NoSuchElementException Se o ID não for encontrado (mapeado para 404)
+     */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletePerson(@PathVariable long id){
         service.deletePerson(id);

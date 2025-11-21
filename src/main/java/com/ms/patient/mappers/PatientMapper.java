@@ -3,6 +3,9 @@ package com.ms.patient.mappers;
 import com.ms.patient.dto.PatientCreationDTO;
 import com.ms.patient.dto.PatientResponseDTO;
 import com.ms.patient.models.Patient;
+
+import java.util.List;
+
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.springframework.context.annotation.ComponentScan;
@@ -17,4 +20,6 @@ public interface PatientMapper {
     @Mapping(source = "address", target = "address") // Mapeia Address Entity -> AddressResponseDTO
     PatientResponseDTO toPatientResponseDTO(Patient patient);
 
+    List<Patient> toPatientResponse(List<PatientResponseDTO> dtos);
+    List<PatientResponseDTO> toDtoResponse(List<Patient> patients);
 }

@@ -1,5 +1,10 @@
 package com.ms.patient.dto;
 
+/**
+ * DTO (Data Transfer Object) simplificado, usado especificamente para fornecer
+ * informações mínimas de uma pessoa (ID, Email, Nome) para serviços externos,
+ * como um serviço de envio de e-mail.
+ */
 public class PersonEmailSenderDto {
 
     private long id;

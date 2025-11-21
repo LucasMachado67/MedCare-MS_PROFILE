@@ -8,21 +8,42 @@ import com.ms.patient.events.UserCreationEvent;
 import com.ms.patient.models.Medic;
 import com.ms.patient.models.Patient;
 
+/**
+ * Componente responsável por produzir e enviar eventos de criação de usuário
+ * para o broker RabbitMQ de forma assíncrona.
+ *
+ * <p>Estes eventos são consumidos pelo Serviço de Autenticação (Auth Service)
+ * para criar as credenciais de login para novos Médicos e Pacientes.</p>
+ */
 @Component
 public class UserCreationProducer {
 
     final RabbitTemplate rabbitTemplate;
 
+    /**
+     * Construtor para injeção de dependência do {@link RabbitTemplate}.
+     *
+     * @param rabbitTemplate A instância do template do RabbitMQ para envio de mensagens.
+     */
     public UserCreationProducer(RabbitTemplate rabbitTemplate) {
         this.rabbitTemplate = rabbitTemplate;
     }
 
+    /** Chave de roteamento para a fila de registro de Médicos, injetada via properties. */
     @Value(value = "${medcare.rabbitmq.queue.medic-registered}")
     private String routingKeyMedic;
 
+    /** Chave de roteamento para a fila de registro de Pacientes, injetada via properties. */
     @Value(value = "${medcare.rabbitmq.queue.patient-registered}")
     private String routingKeyPatient;
 
+    /**
+     * Constrói e publica um evento de criação de usuário para um novo {@link Medic}.
+     *
+     * <p>O evento é enviado para a fila definida pela {@code routingKeyMedic} com o papel "MEDIC".</p>
+     *
+     * @param medic A entidade Medic recém-criada, contendo ID e Email necessários para o evento.
+     */
     public void publishUserCreationToMedicEvent(Medic medic) {
         
         var medicEventDto = new UserCreationEvent();
@@ -33,6 +54,13 @@ public class UserCreationProducer {
         rabbitTemplate.convertAndSend("", routingKeyMedic, medicEventDto);
     }
 
+    /**
+     * Constrói e publica um evento de criação de usuário para um novo {@link Patient}.
+     *
+     * <p>O evento é enviado para a fila definida pela {@code routingKeyPatient} com o papel "USER".</p>
+     *
+     * @param patient A entidade Patient recém-criada, contendo ID e Email necessários para o evento.
+     */
     public void publishUserCreationToPatientEvent(Patient patient) {
         
         var patientEventDto = new UserCreationEvent();

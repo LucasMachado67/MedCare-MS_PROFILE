@@ -2,9 +2,15 @@ package com.ms.patient.dto;
 
 import java.util.Date;
 
+/**
+ * DTO (Data Transfer Object) utilizado para representar uma Pessoa nos retornos
+ * de requisições GET, POST e PUT da API.
+ *
+ * <p>Inclui o identificador único (ID) gerado pelo sistema e todos os dados
+ * básicos da pessoa, além do endereço aninhado.</p>
+ */
 public class PersonResponseDTO {
 
-    
     private Long id; 
     private String name;
     private Date birthDate;

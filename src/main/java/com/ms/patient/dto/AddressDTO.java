@@ -1,5 +1,10 @@
 package com.ms.patient.dto;
 
+/**
+ * DTO (Data Transfer Object) utilizado para enviar dados de criação ou atualização
+ * de um endereço na API.
+ * * <p>Contém todos os campos necessários para a validação e mapeamento para a entidade Address.</p>
+ */
 public class AddressDTO {
 
     private String neighborhood;

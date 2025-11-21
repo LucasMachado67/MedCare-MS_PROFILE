@@ -1,6 +1,10 @@
 package com.ms.patient.dto;
 
-
+/**
+ * DTO (Data Transfer Object) utilizado para representar um endereço nos retornos
+ * de requisições GET, POST e PUT da API.
+ * * <p>Inclui o identificador único (ID) gerado pelo sistema, além dos dados do endereço.</p>
+ */
 public class AddressResponseDTO {
 
         private Long id;
