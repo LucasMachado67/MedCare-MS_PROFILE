@@ -29,7 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @since 2025-11-17
  */
 @RestController
-@RequestMapping("medics")
+@RequestMapping("medic")
 public class MedicController {
 
     private final MedicService service;
@@ -53,7 +53,7 @@ public class MedicController {
      * @throws RuntimeException (ou exceção de negócio específica, como CRM já existe)
      * se a regra de negócio for violada (mapeada para 4xx ou 500).
      */
-    @PostMapping
+    @PostMapping("/create")
     public ResponseEntity<MedicResponseDTO> registerMedic(@RequestBody @Valid MedicCreationDTO dto) {
 
         MedicResponseDTO responseDTO = service.createMedic(dto);

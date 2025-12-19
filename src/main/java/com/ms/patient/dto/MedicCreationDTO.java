@@ -2,8 +2,6 @@ package com.ms.patient.dto;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.br.CPF;
 
 import java.util.Date;
@@ -11,7 +9,7 @@ import java.util.Date;
 /**
  * DTO (Data Transfer Object) utilizado para a criação de um novo registro de Médico.
  *
- * <p>Este DTO combina dados herdados de Pessoa (Person), um objeto de endereço aninhado,
+ * <p>Este DTO combina dados herdados de Pessoa (Person); um objeto de endereço aninhado;
  * e campos específicos da entidade Médico, aplicando validações rigorosas.</p>
  *
  * @param name O nome completo do médico. Deve ser preenchido ({@code @NotBlank}).
@@ -24,19 +22,79 @@ import java.util.Date;
  * @param crm O número de registro do Conselho Regional de Medicina (CRM). Deve ser preenchido ({@code @NotBlank}).
  * @param medicalSpeciality A especialidade médica principal do profissional. Deve ser preenchida ({@code @NotBlank}).
  */
-public record MedicCreationDTO (
+public class MedicCreationDTO {
         // --- CAMPOS HERDADOS DE PERSON ---
-        @NotBlank String name,
-        @NotNull Date birthDate,
-        @NotBlank @CPF String cpf,
-        @NotBlank String gender,
-        @NotBlank @Email String email,
-        @NotBlank String phone,
+        private String name;
+        private Date birthDate;
+        @CPF
+        private String cpf;
+        private String gender;
+        @Email
+        private String email;
+        private String phone;
 
         // --- ENDEREÇO ANINHADO ---
-        @Valid AddressDTO address, // Usando o DTO de requisição do Address
+        @Valid
+        private AddressDTO address; // Usando o DTO de requisição do Address
 
         // --- CAMPOS ESPECÍFICOS DE MEDIC ---
-        @NotBlank String crm,
-        @NotBlank String medicalSpeciality
-){}
+        private String crm;
+        private String medicalSpeciality;
+        
+        public String getName() {
+                return name;
+        }
+        public void setName(String name) {
+                this.name = name;
+        }
+        public Date getBirthDate() {
+                return birthDate;
+        }
+        public void setBirthDate(Date birthDate) {
+                this.birthDate = birthDate;
+        }
+        public String getCpf() {
+                return cpf;
+        }
+        public void setCpf(String cpf) {
+                this.cpf = cpf;
+        }
+        public String getGender() {
+                return gender;
+        }
+        public void setGender(String gender) {
+                this.gender = gender;
+        }
+        public String getEmail() {
+                return email;
+        }
+        public void setEmail(String email) {
+                this.email = email;
+        }
+        public String getPhone() {
+                return phone;
+        }
+        public void setPhone(String phone) {
+                this.phone = phone;
+        }
+        public AddressDTO getAddress() {
+                return address;
+        }
+        public void setAddress(AddressDTO address) {
+                this.address = address;
+        }
+        public String getCrm() {
+                return crm;
+        }
+        public void setCrm(String crm) {
+                this.crm = crm;
+        }
+        public String getMedicalSpeciality() {
+                return medicalSpeciality;
+        }
+        public void setMedicalSpeciality(String medicalSpeciality) {
+                this.medicalSpeciality = medicalSpeciality;
+        }
+
+        
+}

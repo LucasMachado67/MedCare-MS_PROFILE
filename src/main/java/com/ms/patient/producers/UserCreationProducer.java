@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.ms.patient.events.UserCreationEvent;
+import com.ms.patient.models.Assistant;
 import com.ms.patient.models.Medic;
 import com.ms.patient.models.Patient;
 
@@ -36,6 +37,9 @@ public class UserCreationProducer {
     /** Chave de roteamento para a fila de registro de Pacientes, injetada via properties. */
     @Value(value = "${medcare.rabbitmq.queue.patient-registered}")
     private String routingKeyPatient;
+    /** Chave de roteamento para a fila de registro de Assistentes, injetada via properties. */
+    @Value(value = "${medcare.rabbitmq.queue.assistant-registered}")
+    private String routingKeyAssistant;
 
     /**
      * Constrói e publica um evento de criação de usuário para um novo {@link Medic}.
@@ -52,6 +56,23 @@ public class UserCreationProducer {
         medicEventDto.setRole("MEDIC");
         
         rabbitTemplate.convertAndSend("", routingKeyMedic, medicEventDto);
+    }
+
+    /**
+     * Constrói e publica um evento de criação de usuário para um novo {@link Assistant}.
+     *
+     * <p>O evento é enviado para a fila definida pela {@code routingKeyAssistant} com o papel "Assistant".</p>
+     *
+     * @param Assistant A entidade Assistant recém-criada, contendo ID e Email necessários para o evento.
+     */
+    public void publishUserCreationToAssistantEvent(Assistant assistant) {
+        
+        var assistantEventDto = new UserCreationEvent();
+        assistantEventDto.setPerson_id(assistant.getId());
+        assistantEventDto.setUsername(assistant.getEmail());
+        assistantEventDto.setRole("ASSISTANT");
+        
+        rabbitTemplate.convertAndSend("", routingKeyAssistant, assistantEventDto);
     }
 
     /**
