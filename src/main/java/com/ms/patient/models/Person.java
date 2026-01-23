@@ -1,0 +1,159 @@
+package com.ms.patient.models;
+
+
+import java.util.Date;
+
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+
+/**
+ * Entidade JPA base que representa uma Pessoa no sistema.
+ *
+ * <p>Mapeada para a tabela {@code person} no banco de dados. Contém os dados
+ * de identificação e contato comuns a todos os usuários (ex: Médicos e Pacientes).</p>
+ *
+ * <p>Esta entidade utiliza a estratégia de herança {@code InheritanceType.JOINED},
+ * onde as subclasses ({@link Medic}, {@link Patient}) terão suas próprias tabelas
+ * que se unirão (JOIN) à tabela {@code person} usando a chave primária.</p>
+ */
+@Entity
+@Table(name="person")
+@Inheritance(strategy = InheritanceType.JOINED)
+public class Person {
+
+    /**
+     * Chave primária (Primary Key) da entidade.
+     * <p>Auto-gerada pelo banco de dados usando estratégia de identidade.</p>
+     */
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    
+    /**
+     * Nome completo da pessoa.
+     * <p>Restrição: Não nulo (NOT NULL).</p>
+     */
+    @NotNull
+    private String name;
+    
+    /**
+     * Data de nascimento da pessoa.
+     * <p>Restrição: Não nulo (NOT NULL).</p>
+     */
+    @NotNull
+    private Date birthDate;
+    
+    /**
+     * CPF (Cadastro de Pessoas Físicas).
+     * <p>Restrição: Não nulo (NOT NULL). Espera-se que a camada de Serviço garanta a unicidade.</p>
+     */
+    @NotNull
+    private String cpf;
+    
+    /**
+     * Gênero da pessoa.
+     * <p>Restrição: Não nulo (NOT NULL).</p>
+     */
+    @NotNull
+    private String gender;
+    
+    /**
+     * Endereço de e-mail da pessoa.
+     * <p>Restrição: Não nulo (NOT NULL). Espera-se que a camada de Serviço garanta a unicidade.</p>
+     */
+    @NotNull
+    private String email;
+    
+    /**
+     * Número de telefone da pessoa.
+     * <p>Restrição: Não nulo (NOT NULL). Espera-se que a camada de Serviço garanta a unicidade.</p>
+     */
+    @NotNull
+    private String phone;
+    
+    /**
+     * Relação One-to-One (Um para Um) com a entidade {@link Address}.
+     * <p>O {@code cascade = CascadeType.ALL} garante que operações como salvar ou deletar Pessoa
+     * sejam propagadas para o Address associado.</p>
+     */
+    @NotNull
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "address_id", referencedColumnName = "id")
+    private Address address;
+    
+    /**
+     * Construtor padrão exigido pelo JPA.
+     */
+    public Person(){}
+    
+    /**
+     * Construtor para criação da entidade Person.
+     *
+     * @param name O nome completo.
+     * @param birthDate A data de nascimento.
+     * @param cpf O CPF.
+     * @param gender O gênero.
+     * @param email O e-mail.
+     * @param phone O telefone.
+     * @param address O objeto de endereço associado ({@link Address}).
+     */
+    public Person(String name, Date birthDate, String cpf, String gender, String email, String phone, Address address){
+        setName(name);
+        setBirthDate(birthDate);
+        setCpf(cpf);
+        setGender(gender);
+        setEmail(email);
+        setPhone(phone);
+        setAddress(address);
+    }
+
+    public long getId(){
+        return id;
+    }
+    
+    public String getName() {
+        return name;
+    }
+    public void setName(String name) {
+        this.name = name;
+    }
+    public Date getBirthDate() {
+        return birthDate;
+    }
+    public void setBirthDate(Date birthDate) {
+        this.birthDate = birthDate;
+    }
+    public String getCpf() {
+        return cpf;
+    }
+    public void setCpf(String cpf) {
+        this.cpf = cpf;
+    }
+    public String getGender() {
+        return gender;
+    }
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+    public String getEmail() {
+        return email;
+    }
+    public void setEmail(String email) {
+        this.email = email;
+    }
+    public String getPhone() {
+        return phone;
+    }
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public Address getAddress() {
+        return address;
+    }
+
+    public void setAddress(Address address) {
+        this.address = address;
+    }
+    
+}

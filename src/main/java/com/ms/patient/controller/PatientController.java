@@ -1,0 +1,104 @@
+package com.ms.patient.controller;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.ms.patient.dto.PatientCreationDTO;
+import com.ms.patient.dto.PatientResponseDTO;
+import com.ms.patient.mappers.PatientMapper;
+import com.ms.patient.models.Patient;
+import com.ms.patient.service.PatientService;
+
+import jakarta.validation.Valid;
+/**
+ * Controller REST para gerenciar operações relacionadas ao paciente.
+ * Mapeado para caminho base "/patient"
+ * 
+ * <p>Esta classe lida com requisições HTTP para criar, buscar e atualizar
+ * informações de pacientes no sistema.
+ * 
+ * @author Lucas Edson Machado
+ * @version 1.0.0
+ */
+@RestController
+@RequestMapping("patient")
+public class PatientController {
+
+    @Autowired
+    private PatientService service;
+    @Autowired
+    private PatientMapper mapper;
+    /**
+     * Cria um novo paciente no sistema
+     * 
+     * <p>Recebe os dados do paciente no corpo da requisição (payload) e os
+     * persiste no banco de dados.
+     * 
+     * @param patientDTO O objeto de transferência de dados (DTO) contendo as
+     * informações do novo paciente. O corpo deve ser formatado
+     * como JSON.
+     * @return ResponseEntity contendo o paciente recém-criado (DTO) com o ID gerado,
+     * e o status HTTP 201 (Created)
+     * 
+     * @throws jakarta.validation.ValidationException se o DTO não for válido.
+     */
+    @PostMapping("/create")
+    public ResponseEntity<PatientResponseDTO> registerPatient(@RequestBody @Valid PatientCreationDTO dto) {
+
+        // 1. Delega a lógica para o Service (que salva no DB e envia o evento)
+        PatientResponseDTO responseDTO = service.createPatient(dto);
+
+        // 2. Retorna 201 Created (padrão HTTP para criação bem-sucedida)
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(responseDTO);
+    }
+    /**
+     * Retorna os dados do paciente através do id
+     * 
+     * <p>O ID é esperado como uma variável de caminho (path variable).
+     * 
+     * @param id O identificador único do paciente (geralmente um Long ou UUID)
+     * a ser buscado no sistema.
+     * @return ResponseEntity contendo o PacienteDTO correspondente e o status
+     * HTTP 200 (OK).
+     * @throws ResponseEntity.notFound() que equivale a um
+     * status HTTP 404 (Not Found).
+     */
+    @GetMapping("/{id}")
+    public ResponseEntity<PatientResponseDTO> findById(@PathVariable long id){
+        
+        Patient foundPatient = service.findById(id);
+
+        if(foundPatient == null){
+            return ResponseEntity.notFound().build();
+        }
+        
+        PatientResponseDTO responseDTO = mapper.toPatientResponseDTO(foundPatient);
+
+        return ResponseEntity.ok(responseDTO);
+    }
+    
+    /**
+     * Retorna os dados de todos os pacientes
+     * 
+     * @return ResponseEntity contendo a lista de PacienteDTO e o status
+     * HTTP 200 (OK).
+     */
+    @GetMapping("/all")
+    public ResponseEntity<List<PatientResponseDTO>> findAll(){
+        
+        List<Patient> patients = service.findAll();
+        List<PatientResponseDTO> responseDTO = mapper.toDtoResponse(patients);
+        return ResponseEntity.ok(responseDTO);
+    }
+}
