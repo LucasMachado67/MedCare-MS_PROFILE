@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * Controlador REST para gerenciar operações relacionadas à entidade Médico (Medic).
+ * Controlador REST para gerir operações relacionadas à entidade Médico (Medic).
  *
  * <p>Mapeado para o caminho base "/medics". Lida com a criação e consulta de registros
  * de médicos no sistema.</p>
@@ -42,7 +42,7 @@ public class MedicController {
         this.mapper = mapper;
     }
     /**
-     * Registra um novo médico no sistema.
+     * Registry um novo médico no sistema.
      *
      * <p>Recebe o DTO de criação no corpo da requisição, delega ao serviço para persistência
      * e retorna o recurso criado.</p>
@@ -50,8 +50,7 @@ public class MedicController {
      * @param dto Os dados do médico, incluindo dados da Pessoa e Endereço.
      * @return ResponseEntity contendo o {@link MedicResponseDTO} do médico criado
      * e o status HTTP 201 (Created).
-     * @throws JsonProcessingException 
-     * @throws jakarta.validation.ValidationException Se o DTO não for válido.
+     * @throws jakarta.validation.ValidationException Se o DTO for inválido.
      * @throws RuntimeException (ou exceção de negócio específica, como CRM já existe)
      * se a regra de negócio for violada (mapeada para 4xx ou 500).
      */
@@ -66,12 +65,12 @@ public class MedicController {
     }
 
     /**
-     * Busca os detalhes de um médico específico pelo seu ID.
+     * Busca os detalhes de um médico específico pelo seu 'ID'.
      *
      * @param id O identificador único do médico a ser buscado.
      * @return ResponseEntity contendo o {@link MedicResponseDTO} correspondente
      * e o status HTTP 200 (OK).
-     * @throws NoSuchElementException Se nenhum médico for encontrado com o ID fornecido (mapeado para 404 Not Found).
+     * @throws NoSuchElementException Se nenhum médico for encontrado com o 'ID' fornecido (mapeado para 404 Not Found).
      */
     @GetMapping("/{id}")
     public ResponseEntity<MedicResponseDTO> findById(@PathVariable long id){

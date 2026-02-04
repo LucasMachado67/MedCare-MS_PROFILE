@@ -26,46 +26,38 @@ public class UserCreationProducer {
     private final ObjectMapper objectMapper;
 
     /**
-     * Construtor para injeção de dependência do {@link sqsTemplate}.
+     * Construtor para injeção de dependência do sqsTemplate.
      *
-     * @param sqsTemplate A instância do template do Amazon SQS para envio de mensagens.
+     * @param sqsTemplate A instância do 'template' do Amazon SQS para envio de mensagens.
      */
     public UserCreationProducer(SqsTemplate sqsTemplate, ObjectMapper objectMapper) {
         this.sqsTemplate = sqsTemplate;
         this.objectMapper = objectMapper;
     }
 
-    //É necessário ter três filas pois cada usuário irá receber um tratamento diferente no service (role)
-    @Value(value = "${medcare.aws.sqs.queue.medic.register}")
-    private String medicQueue;
-
-    // @Value(value = "${}")
-    // private String patientQueue;
-
-    // @Value(value = "${}")
-    // private String assistantQueue;
+    //É necessário ter três filas, pois cada usuário irá receber um tratamento diferente no service (role)
+    @Value(value = "${medcare.aws.sqs.queue.entity.register}")
+    private String entityQueue;
 
     /**
      * Constrói e publica um evento de criação de usuário para um novo {@link Medic}.
      *
      * <p>O evento é enviado para a fila definida pela {@code routingKeyMedic} com o papel "MEDIC".</p>
      *
-     * @param medic A entidade Medic recém-criada, contendo ID e Email necessários para o evento.
-     * @throws JsonProcessingException 
+     * @param medic A entidade Medic recém-criada, contendo 'ID' e E-mail necessários para o evento.
      */
     public void publishUserCreationToMedicEvent(Medic medic) throws JsonProcessingException {
         //Usando o mesmo ID para ambas as entidades (Medic = UserMedic)
-        
         var event = new UserCreationEvent();
         event.setPerson_id(medic.getId());
         event.setUsername(medic.getEmail());
         event.setRole(("MEDIC"));   
-        //Passando os dados como string
+        //Passando os dados como 'string'
         String json = objectMapper.writeValueAsString(event);
 
-        //Enviando a mensagem(medicEventDto) para fila medicQueue
+        //Enviando a mensagem(medicEventDto) para fila entityQueue
         sqsTemplate.send(to -> to
-                .queue(medicQueue)
+                .queue(entityQueue)
                 .payload(json));
             System.out.println("Message sent!");
     }
@@ -75,11 +67,21 @@ public class UserCreationProducer {
      *
      * <p>O evento é enviado para a fila definida pela {@code routingKeyAssistant} com o papel "Assistant".</p>
      *
-     * @param Assistant A entidade Assistant recém-criada, contendo ID e Email necessários para o evento.
+     * @param assistant A entidade Assistant recém-criada, contendo 'ID' e Endereço eletrónico necessários para o evento.
      */
-    public void publishUserCreationToAssistantEvent(Assistant assistant) {
-        
-       
+    public void publishUserCreationToAssistantEvent(Assistant assistant) throws JsonProcessingException{
+        var event = new UserCreationEvent();
+        event.setPerson_id(assistant.getId());
+        event.setUsername(assistant.getEmail());
+        event.setRole(("ASSISTANT"));
+        //Passando os dados como 'string'
+        String json = objectMapper.writeValueAsString(event);
+
+        //Enviando a mensagem(medicEventDto) para fila entityQueue
+        sqsTemplate.send(to -> to
+                .queue(entityQueue)
+                .payload(json));
+        System.out.println("Message sent!");
     }
 
     /**
@@ -87,10 +89,21 @@ public class UserCreationProducer {
      *
      * <p>O evento é enviado para a fila definida pela {@code routingKeyPatient} com o papel "USER".</p>
      *
-     * @param patient A entidade Patient recém-criada, contendo ID e Email necessários para o evento.
+     * @param patient A entidade Patient recém-criada, contendo 'ID' e 'E-mail' necessários para o evento.
      */
-    public void publishUserCreationToPatientEvent(Patient patient) {
-        
-        
+    public void publishUserCreationToPatientEvent(Patient patient) throws JsonProcessingException{
+        //Usando o mesmo ID para ambas as entidades (Medic = UserMedic)
+        var event = new UserCreationEvent();
+        event.setPerson_id(patient.getId());
+        event.setUsername(patient.getEmail());
+        event.setRole(("USER"));
+        //Passando os dados como 'string'
+        String json = objectMapper.writeValueAsString(event);
+
+        //Enviando a mensagem(medicEventDto) para fila entityQueue
+        sqsTemplate.send(to -> to
+                .queue(entityQueue)
+                .payload(json));
+        System.out.println("Message sent!");
     }
 }

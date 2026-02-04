@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * Evento assíncrono utilizado para notificar o Serviço de Autenticação (Auth Service)
  * sobre a criação de um novo registro de Pessoa.
  *
- * <p>O serviço de destino deve consumir este evento para criar as credenciais de login
+ * <p>O serviço de destino deve consumir este evento para criar as credenciais de 'login'
  * (usuário e papel/permissão) associadas à nova Pessoa.</p>
  *
  * @see com.ms.patient.producers.UserCreationProducer
@@ -21,12 +21,12 @@ public class UserCreationEvent {
         @JsonProperty("person_id")
         private Long person_id;
         /**
-         * O nome de usuário (username) que deve ser utilizado para a nova credencial de login.
+         * O nome de usuário (username) que deve ser utilizado para a nova credencial de 'login'.
          * <pCorresponde ao Email da Pessoa.</p>
          */
         private String username;
         /**
-         * O papel (role) ou nível de permissão assoc à ciadoredencial (ex: "PATIENT", "MEDIC").
+         * O papel (role) ou nível de permissão assoc à credencial (ex: "PATIENT", "MEDIC").
          */
         private String role;
         

@@ -3,7 +3,7 @@ package com.ms.patient.dto;
 /**
  * DTO (Data Transfer Object) utilizado para representar um endereço nos retornos
  * de requisições GET, POST e PUT da API.
- * * <p>Inclui o identificador único (ID) gerado pelo sistema, além dos dados do endereço.</p>
+ * * <p>Inclui o identificador único 'ID' gerado pelo sistema, além dos dados do endereço.</p>
  */
 public class AddressResponseDTO {
 
@@ -17,7 +17,6 @@ public class AddressResponseDTO {
         private String state;
         private String habitation;
 
-        
         public Long getId() {
                 return id;
         }
@@ -73,7 +72,4 @@ public class AddressResponseDTO {
                 this.habitation = habitation;
         }
 
-        
-
-        
 }

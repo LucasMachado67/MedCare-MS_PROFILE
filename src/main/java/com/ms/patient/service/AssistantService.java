@@ -3,6 +3,8 @@ package com.ms.patient.service;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.ms.patient.utils.RegistrationNumber;
 import org.springframework.stereotype.Service;
 
 import com.ms.patient.dto.AssistantCreationDTO;
@@ -20,19 +22,21 @@ public class AssistantService {
     private final AssistantRepository repository;
     private final AssistantMapper mapper;
     private final UserCreationProducer assistantProducer;
+    private final PersonService personService;
 
     /**
      * Construtor para injeção de dependências dos componentes de persistência,
      * mapeamento e produção de eventos.
      *
      * @param repository O repositório para acesso a dados de {@link Medic}.
-     * @param mapper O mapeador para conversão entre DTOs e entidades.
+     * @param mapper O mapper para conversão entre DTOs e entidades.
      * @param assistantProducer O produtor de eventos para criação de usuários.
      */
-    public AssistantService(AssistantRepository repository, AssistantMapper mapper, UserCreationProducer assistantProducer) {
+    public AssistantService(AssistantRepository repository, AssistantMapper mapper, UserCreationProducer assistantProducer, PersonService personService) {
         this.repository = repository;
         this.mapper = mapper;
         this.assistantProducer = assistantProducer;
+        this.personService = personService;
     }
 
     /**
@@ -41,19 +45,23 @@ public class AssistantService {
      *
      * @param dto O DTO de criação contendo os dados do novo assistente.
      * @return O {@link AssistantResponseDTO} do assistente recém-criado.
-     * @throws RuntimeException se o CRM já estiver cadastrados.
-     * @throws CpfAlreadyExistsException se o Cpf já estiver cadastrados.
+     * @throws RuntimeException se o CRM já estiver cadastrado.
+     * @throws CpfAlreadyExistsException se o Cpf já estiver cadastrado.
      */
-    public AssistantResponseDTO createAssistant(AssistantCreationDTO dto){
+    public AssistantResponseDTO createAssistant(AssistantCreationDTO dto) throws JsonProcessingException {
 
+        RegistrationNumber registrationNumber = new RegistrationNumber();
         // 1. VALIDAÇÃO DE REGRA DE NEGÓCIO
-        //If (repository.existsByCrm(dto.crm())) {
-        //    //Criar uma exceção específica depois
-        //    throw new RuntimeException("CRM já cadastrado.");
-        //}
-        //if (repository.existsByCpf(dto.cpf())) {
-        //    throw new CpfAlreadyExistsException("CPF já cadastrado.");
-        //}
+
+        //Validação dos campos de Person via personService
+        boolean result = personService.validatePersonInfo(dto);
+        if(!result){
+            throw new IllegalArgumentException();
+        }
+
+        do {
+            dto.setRegistrationNumber(registrationNumber.generateNumber());
+        } while (repository.existsByRegistrationNumber(dto.getRegistrationNumber()));
 
         // 2. CONVERSÃO DTO ≥ ENTIDADE
         // O Mapper cuida da criação de Person, Address e Assistant.

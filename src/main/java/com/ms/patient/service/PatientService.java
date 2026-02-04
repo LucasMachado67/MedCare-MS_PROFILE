@@ -3,6 +3,7 @@ package com.ms.patient.service;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.stereotype.Service;
 
 import com.ms.patient.dto.PatientCreationDTO;
@@ -16,7 +17,7 @@ import com.ms.patient.producers.UserCreationProducer;
 import com.ms.patient.repositories.PatientRepository;
 
 /**
- * Serviço responsável por gerenciar toda a lógica de negócio (CRUD e validações)
+ * Serviço responsável por gerir toda a lógica de negócio (CRUD e validações)
  * para a entidade {@link Patient}.
  *
  * <p>Esta classe interage com o {@link PatientRepository} para persistência
@@ -32,12 +33,14 @@ public class PatientService {
     private final PatientRepository repository;
     private final PatientMapper mapper;
     private final UserCreationProducer userProducer;
+    private final PersonService personService;
 
     
-    public PatientService(PatientRepository repository, PatientMapper mapper, UserCreationProducer userProducer) {
+    public PatientService(PatientRepository repository, PatientMapper mapper, UserCreationProducer userProducer, PersonService personService) {
         this.repository = repository;
         this.mapper = mapper;
         this.userProducer = userProducer;
+        this.personService = personService;
     }
      /**
      * Cria e persiste um novo paciente no sistema, aplicando as regras de negócio.
@@ -52,16 +55,16 @@ public class PatientService {
      * @throws CpfAlreadyExistsException se o CPF do DTO já estiver cadastrado (descomentar validação).
      * @throws InvalidCpfException se o CPF for inválido (descomentar validação).
      */
-    public PatientResponseDTO createPatient(PatientCreationDTO dto){
+    public PatientResponseDTO createPatient(PatientCreationDTO dto) throws JsonProcessingException {
 
-        //Está comentado para ser mais fácil de testar várias requisições
         // 1. VALIDAÇÃO DE REGRA DE NEGÓCIO
-        // Garantir que o CPF é único antes de salvar.
-        // No mundo real, esta verificação deve ser mais robusta.
-        //If (repository.existsByCpf(dto.cpf())) {
-        //    //Criar uma exceção específica depois
-        //    throw new CpfAlreadyExistsException("CPF já cadastrado.");
-        //}
+
+        //Validação dos campos de Person via personService
+        boolean result = personService.validatePersonInfo(dto);
+        if(!result){
+            throw new IllegalArgumentException();
+        }
+
         // 2. CONVERSÃO DTO ≥ ENTIDADE
         // O Mapper cuida da criação de Person, Address e Patient.
         var patient = mapper.toPatient(dto);
@@ -81,10 +84,10 @@ public class PatientService {
      *
      * @param id O ID do paciente a ser procurado.
      * @return A entidade {@link Patient} encontrada.
-     * @throws NoSuchElementException Se nenhum paciente for encontrado com o ID fornecido.
+     * @throws NoSuchElementException Se nenhum paciente for encontrado com o 'ID' fornecido.
      */
     public Patient findById(long id){
-        return repository.findById(id).orElseThrow(() -> new NoSuchElementException("NO DATA FOUND"));
+        return repository.findById(id).orElseThrow(() -> new NoSuchElementException("PATIENT NOT FOUND"));
     }
     /**
      * Retorna uma lista contendo todos os pacientes cadastrados no sistema.
@@ -93,8 +96,6 @@ public class PatientService {
      * mas nunca {@code null}.
      */
     public List<Patient> findAll(){
-        List<Patient> patients = repository.findAll();
-        
-        return patients;
+        return repository.findAll();
     }
 }

@@ -13,7 +13,7 @@ import jakarta.validation.constraints.NotNull;
  * de identificação e contato comuns a todos os usuários (ex: Médicos e Pacientes).</p>
  *
  * <p>Esta entidade utiliza a estratégia de herança {@code InheritanceType.JOINED},
- * onde as subclasses ({@link Medic}, {@link Patient}) terão suas próprias tabelas
+ * onde as subclasses ({@link Medic}, {@link Patient}) terão as suas próprias tabelas
  * que se unirão (JOIN) à tabela {@code person} usando a chave primária.</p>
  */
 @Entity

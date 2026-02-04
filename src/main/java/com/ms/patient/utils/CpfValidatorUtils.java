@@ -27,7 +27,7 @@ public class CpfValidatorUtils {
      * </ul></p>
      *
      * @param cpf O CPF a ser validado, podendo conter máscara (pontos e traços).
-     * @return {@code true} se o CPF for válido de acordo com as regras matemáticas e de formato, {@code false} caso contrário.
+     * @return {@code true} se o CPF for válido conforme as regras matemáticas e de formato, {@code false} caso contrário.
      */
     public static boolean isValidCpf(String cpf) {
         if (cpf == null) {

@@ -12,7 +12,6 @@ import jakarta.validation.constraints.NotNull;
 @PrimaryKeyJoinColumn(name = "person_id")
 public class Assistant extends Person{
 
-    @NotNull
     private String registrationNumber;
     @NotNull
     private Boolean active;

@@ -3,6 +3,7 @@ package com.ms.patient.controller;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,7 +31,7 @@ import jakarta.validation.Valid;
  * @since 2025-11-17
  */
 @RestController
-@RequestMapping("assistants")
+@RequestMapping("assistant")
 public class AssistantController {
 
     private final AssistantService service;
@@ -55,8 +56,8 @@ public class AssistantController {
      * @throws RuntimeException (ou exceção de negócio específica, como CRM já existe)
      * se a regra de negócio for violada (mapeada para 4xx ou 500).
      */
-    @PostMapping
-    public ResponseEntity<AssistantResponseDTO> registerAssistant(@RequestBody @Valid AssistantCreationDTO dto) {
+    @PostMapping("/create")
+    public ResponseEntity<AssistantResponseDTO> registerAssistant(@RequestBody @Valid AssistantCreationDTO dto) throws JsonProcessingException {
 
         AssistantResponseDTO responseDTO = service.createAssistant(dto);
 

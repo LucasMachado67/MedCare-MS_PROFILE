@@ -2,6 +2,8 @@ package com.ms.patient.controller;
 
 import java.util.List;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import jakarta.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -38,26 +40,24 @@ public class PatientController {
     @Autowired
     private PatientMapper mapper;
     /**
-     * Cria um novo paciente no sistema
+     * Cria um paciente no sistema
      * 
      * <p>Recebe os dados do paciente no corpo da requisição (payload) e os
      * persiste no banco de dados.
      * 
-     * @param patientDTO O objeto de transferência de dados (DTO) contendo as
+     * @param dto O objeto de transferência de dados (DTO) contendo as
      * informações do novo paciente. O corpo deve ser formatado
      * como JSON.
-     * @return ResponseEntity contendo o paciente recém-criado (DTO) com o ID gerado,
+     * @return ResponseEntity contendo o paciente recém-criado (DTO) com o 'ID' gerado,
      * e o status HTTP 201 (Created)
      * 
-     * @throws jakarta.validation.ValidationException se o DTO não for válido.
+     * @throws ValidationException se o DTO for inválido.
      */
     @PostMapping("/create")
-    public ResponseEntity<PatientResponseDTO> registerPatient(@RequestBody @Valid PatientCreationDTO dto) {
+    public ResponseEntity<PatientResponseDTO> registerPatient(@RequestBody @Valid PatientCreationDTO dto) throws JsonProcessingException {
 
-        // 1. Delega a lógica para o Service (que salva no DB e envia o evento)
         PatientResponseDTO responseDTO = service.createPatient(dto);
 
-        // 2. Retorna 201 Created (padrão HTTP para criação bem-sucedida)
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(responseDTO);
@@ -65,14 +65,12 @@ public class PatientController {
     /**
      * Retorna os dados do paciente através do id
      * 
-     * <p>O ID é esperado como uma variável de caminho (path variable).
+     * <p>O 'ID' é esperado como uma variável de caminho (path variable).
      * 
      * @param id O identificador único do paciente (geralmente um Long ou UUID)
      * a ser buscado no sistema.
-     * @return ResponseEntity contendo o PacienteDTO correspondente e o status
+     * @return ResponseEntity contendo o PacienteDTO correspondente e o status ou ResponseEntity.notFound()
      * HTTP 200 (OK).
-     * @throws ResponseEntity.notFound() que equivale a um
-     * status HTTP 404 (Not Found).
      */
     @GetMapping("/{id}")
     public ResponseEntity<PatientResponseDTO> findById(@PathVariable long id){

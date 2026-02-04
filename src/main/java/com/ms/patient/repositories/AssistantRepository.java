@@ -8,4 +8,5 @@ import com.ms.patient.models.Assistant;
 @Repository
 public interface AssistantRepository extends JpaRepository<Assistant, Long>{
 
+    boolean existsByRegistrationNumber(String registrationNumber);
 }

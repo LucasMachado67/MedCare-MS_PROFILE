@@ -27,7 +27,7 @@ import java.util.NoSuchElementException;
 @Service
 public class MedicService {
     
-    
+    private final PersonService personService;
     private final MedicRepository repository;
     private final MedicMapper mapper;
     private final UserCreationProducer medicProducer;
@@ -37,13 +37,14 @@ public class MedicService {
      * mapeamento e produção de eventos.
      *
      * @param repository O repositório para acesso a dados de {@link Medic}.
-     * @param mapper O mapeador para conversão entre DTOs e entidades.
-     * @param medicProducer O produtor de eventos para criação de usuários.
+     * @param mapper converter entre DTOs e entidades.
+     * @param medicProducer O produtor de eventos para criação de 'users'.
      */
-    public MedicService(MedicRepository repository, MedicMapper mapper, UserCreationProducer medicProducer) {
+    public MedicService(MedicRepository repository, MedicMapper mapper, UserCreationProducer medicProducer, PersonService personService) {
         this.repository = repository;
         this.mapper = mapper;
         this.medicProducer = medicProducer;
+        this.personService = personService;
     }
 
     /**
@@ -55,31 +56,32 @@ public class MedicService {
      *
      * @param dto O DTO de criação contendo os dados do novo médico.
      * @return O {@link MedicResponseDTO} do médico recém-criado.
-     * @throws JsonProcessingException 
-     * @throws RuntimeException se o CRM já estiver cadastrados.
-     * @throws CpfAlreadyExistsException se o Cpf já estiver cadastrados.
+     * @throws RuntimeException se o CRM já estiver cadastrado.
+     * @throws CpfAlreadyExistsException se o Cpf já estiver cadastrado.
      */
     public MedicResponseDTO createMedic(MedicCreationDTO dto) throws JsonProcessingException{
 
         // 1. VALIDAÇÃO DE REGRA DE NEGÓCIO
         // Garantir que o CPF e o CRM são únicos antes de salvar.
-        //If (repository.existsByCrm(dto.crm())) {
-        //    //Criar uma exceção específica depois
-        //    throw new RuntimeException("CRM já cadastrado.");
-        //}
-        //if (repository.existsByCpf(dto.cpf())) {
-        //    throw new CpfAlreadyExistsException("CPF já cadastrado.");
-        //}
+        if (repository.existsByCrm(dto.getCrm())) {
+            throw new RuntimeException("CRM já cadastrado.");
+        }
+
+        //Validação dos campos de Person via personService
+        boolean result = personService.validatePersonInfo(dto);
+        if(!result){
+            throw new IllegalArgumentException();
+        }
 
         // 2. CONVERSÃO DTO ≥ ENTIDADE
         // O Mapper cuida da criação de Person, Address e Medic.
         Medic medic = mapper.toMedic(dto);
 
-        // 3. PERSISTÊNCIA
+        // 3. PERSISTÊNCIA no banco
         Medic savedMedic = repository.save(medic);
 
         // ---------------------------------------------
-        // ENVIO DO EVENTO ASSÍNCRONO
+        // ENVIO DO EVENTO ASSÍNCRONO - para criação de um usuário no sistema
         // ---------------------------------------------
 
         // 4. Criando o objeto de evento
